@@ -51,6 +51,7 @@ namespace YimMenu::Submenus
 		auto columns       = std::make_shared<Column>(2);
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("demigod"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("invis"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("offtheradar"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("noragdoll"_J));
@@ -83,7 +84,7 @@ namespace YimMenu::Submenus
 		AddCategory(std::move(main));
 
 		auto horse             = std::make_shared<Category>("Horse");
-		auto horseColumns             = std::make_shared<Column>(2);
+		auto horseColumns      = std::make_shared<Column>(2);
 		auto horseGlobalsGroup = std::make_shared<Group>("Globals", GetListBoxDimensions());
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsegodmode"_J));
 		horseGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("horsenoragdoll"_J));
