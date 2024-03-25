@@ -1,10 +1,12 @@
 #include "Players.hpp"
 
 #include "core/commands/Commands.hpp"
+#include "core/player_database/player_database_service.hpp"
 #include "game/backend/Players.hpp"
 #include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
+#include "game/pointers/Pointers.hpp"
 #include "util/network.hpp"
 #include "util/teleport.hpp"
 
@@ -52,9 +54,23 @@ namespace YimMenu::Submenus
 			ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 			for (auto& [id, player] : sortedPlayers)
 			{
+				static bool needToRemoveStyle;
+				if (g_player_database_service->is_player_in_database(player))
+				{
+					if (g_player_database_service->get_or_create_player(player)->is_modder)
+					{
+						ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 0.1f, 0.1f, 1.f));
+						needToRemoveStyle = true;
+					}
+				}
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
 					YimMenu::Players::SetSelected(id);
+				}
+				if (needToRemoveStyle)
+				{
+					ImGui::PopStyleColor();
+					needToRemoveStyle = false;
 				}
 			}
 			ImGui::End();
@@ -63,6 +79,14 @@ namespace YimMenu::Submenus
 		{
 			for (auto& [id, player] : sortedPlayers)
 			{
+				if (g_player_database_service->is_player_in_database(player))
+				{
+					if (auto plyr = g_player_database_service->get_or_create_player(player);
+					    plyr->is_modder || !plyr->infractions.empty())
+					{
+						ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 0.1f, 0.1f, 1.f));
+					}
+				}
 				if (ImGui::Selectable(player.GetName(), (YimMenu::Players::GetSelected() == player)))
 				{
 					YimMenu::Players::SetSelected(id);
@@ -76,7 +100,7 @@ namespace YimMenu::Submenus
 	{
 		{
 			auto main               = std::make_shared<Category>("Main");
-			auto column             = std::make_shared<Column>(2);
+			auto column             = std::make_shared<Column>(1);
 			auto teleportGroup      = std::make_shared<Group>("Teleport", GetListBoxDimensions());
 			auto playerOptionsGroup = std::make_shared<Group>("Info", GetListBoxDimensions());
 
@@ -93,6 +117,65 @@ namespace YimMenu::Submenus
 				else
 				{
 					YimMenu::Players::SetSelected(Self::Id);
+				}
+			}));
+			playerOptionsGroup->AddItem(std::make_shared<ImGuiItem>([] {
+				if (*Pointers.IsSessionStarted)
+				{
+					auto entry = g_player_database_service->get_or_create_player(YimMenu::Players::GetSelected());
+					ImGui::Text("Player Database Information");
+					if (g_player_database_service->is_player_in_database(YimMenu::Players::GetSelected()))
+					{
+						char notes_buffer[1024];
+						strncpy(notes_buffer, entry->note.data(), sizeof(notes_buffer));
+						bool notes_dirty = false;
+						ImGui::Text("Player Database Information");
+						ImGui::Checkbox("Is Modder", &entry->is_modder);
+						ImGui::Checkbox("Is Trusted", &entry->is_trusted);
+						ImGui::Text(std::string("Rockstar ID")
+						                .append(std::to_string(g_player_database_service->get_rid_from_player(YimMenu::Players::GetSelected())))
+						                .c_str());
+						if (ImGui::InputTextMultiline("Notes", notes_buffer, sizeof(notes_buffer)))
+						{
+							entry->note = notes_buffer;
+							FiberPool::Push([=] {
+								g_player_database_service->save();
+							});
+						}
+						if (!entry->infractions.empty())
+						{
+							ImGui::Text("Infractions");
+							for (auto& infraction : entry->infractions)
+							{
+								ImGui::BulletText(persistent_player::get_infraction_description(infraction));
+							}
+						}
+						bool shouldOpenRemovalWarning = false;
+						if (!shouldOpenRemovalWarning)
+						{
+							if (ImGui::Button("Clear All Infractions"))
+								shouldOpenRemovalWarning = true;
+						}
+						else
+						{
+							if (ImGui::Button("Cancel"))
+								shouldOpenRemovalWarning = false;
+							ImGui::SameLine();
+							if (ImGui::Button("Confirm"))
+							{
+								g_player_database_service->remove_all_infractions_from_player(entry);
+								g_player_database_service->save();
+								shouldOpenRemovalWarning = false;
+							}
+						}
+					}
+					else
+					{
+						if (ImGui::Button("Manually add to Player Database"))
+						{
+							g_player_database_service->get_or_create_player(YimMenu::Players::GetSelected());
+						}
+					}
 				}
 			}));
 

@@ -5,6 +5,7 @@
 #include "core/frontend/Notifications.hpp"
 #include "core/hooking/Hooking.hpp"
 #include "core/memory/ModuleMgr.hpp"
+#include "core/player_database/player_database_service.hpp"
 #include "core/renderer/Renderer.hpp"
 #include "core/settings/Settings.hpp"
 #include "game/backend/FiberPool.hpp"
@@ -27,6 +28,7 @@ namespace YimMenu
 		g_HotkeySystem.RegisterCommands();
 		CustomTeleport::FetchSavedLocations();
 		Settings::Initialize(FileMgr::GetProjectFile("./settings.json"));
+		const auto player_database_service_instance = std::make_unique<player_database_service>();
 
 		if (!ModuleMgr.LoadModules())
 			goto unload;
@@ -66,6 +68,8 @@ namespace YimMenu
 		}
 
 		LOG(INFO) << "Unloading";
+
+		g_player_database_service->save();
 
 		ScriptMgr::Destroy();
 		LOG(INFO) << "ScriptMgr Uninitialized";
