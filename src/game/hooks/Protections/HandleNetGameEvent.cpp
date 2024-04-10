@@ -1,12 +1,14 @@
+#include "core/commands/BoolCommand.hpp"
 #include "core/hooking/DetourHook.hpp"
+#include "game/backend/Protections.hpp"
 #include "game/hooks/Hooks.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
-#include "game/backend/Protections.hpp"
-#include "core/commands/BoolCommand.hpp"
+
 #include <network/CNetGamePlayer.hpp>
-#include <rage/datBitBuffer.hpp>
 #include <network/netObject.hpp>
+#include <rage/datBitBuffer.hpp>
+
 
 namespace
 {
@@ -79,6 +81,34 @@ namespace YimMenu::Hooks
 		if (type == NetEventType::SCRIPT_COMMAND_EVENT && sourcePlayer)
 		{
 			LOG(WARNING) << "Blocked remote native call from " << sourcePlayer->GetName();
+			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+			return;
+		}
+
+		if (type == NetEventType::NETWORK_KNOCK_PED_OFF_VEHICLE_EVENT && sourcePlayer)
+		{
+			LOG(WARNING) << "Blocked knock ped off vehicle event from " << sourcePlayer->GetName();
+			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+			return;
+		}
+
+		if (type == NetEventType::GIVE_PED_SEQUENCE_TASK_EVENT && sourcePlayer)
+		{
+			LOG(WARNING) << "Blocked sequence task event from " << sourcePlayer->GetName();
+			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+			return;
+		}
+
+		if (type == NetEventType::GAME_WEATHER_EVENT && sourcePlayer)
+		{
+			LOG(WARNING) << "Blocked weather event from " << sourcePlayer->GetName();
+			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
+			return;
+		}
+
+		if (type == NetEventType::EXPLOSION_EVENT && sourcePlayer)
+		{
+			LOG(WARNING) << "Blocked explosion event from " << sourcePlayer->GetName();
 			Pointers.SendEventAck(eventMgr, nullptr, sourcePlayer, targetPlayer, index, handledBits);
 			return;
 		}
