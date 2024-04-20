@@ -12,8 +12,6 @@ namespace YimMenu::Hooks
 	{
 		BaseHook::Get<Info::PlayerHasJoined, DetourHook<decltype(&Info::PlayerHasJoined)>>()->Original()(player);
 
-		YimMenu::Protections::IsSpoofedName(g_player_database_service->get_or_create_player(Player(player)));
-
 		LOG(INFO) << player->GetName() << " is joining your session.";
 	}
 

@@ -6,13 +6,10 @@ namespace YimMenu
 	    m_file(FileMgr::GetProjectFile("./database.json"))
 	{
 		load();
-
-		g_player_database_service = this;
 	}
 
 	player_database_service::~player_database_service()
 	{
-		g_player_database_service = nullptr;
 	}
 
 	void player_database_service::save()
@@ -38,7 +35,7 @@ namespace YimMenu
 		std::ifstream file_stream(path_ref);
 
 		nlohmann::json data;
-		file_stream >> std::setw(4) >> data;
+		file_stream >> data;
 		file_stream.close();
 
 		for (auto& [key, value] : data.items())
@@ -90,9 +87,11 @@ namespace YimMenu
 
 	uint64_t player_database_service::get_rid_from_player(Player player)
 	{
+		// Temporary, change in favor of Player::GetRid() when that is merged
 		return player.GetHandle()->m_PlayerInfo->m_GamerInfo.m_GamerHandle.m_rockstar_id;
 	}
 
+	// Probably Unneeded, YimMenu::Player can take CNetGamePlayer as a constructor
 	uint64_t player_database_service::get_rid_from_cnetgameplayer(CNetGamePlayer* player)
 	{
 		return player->m_PlayerInfo->m_GamerInfo.m_GamerHandle.m_rockstar_id;
@@ -145,7 +144,7 @@ namespace YimMenu
 		}
 	}
 
-	bool player_database_service::is_player_in_database(YimMenu::Player player)
+	bool player_database_service::is_player_in_database(Player player)
 	{
 		uint64_t rid = get_rid_from_player(player);
 		if (m_players.contains(rid))

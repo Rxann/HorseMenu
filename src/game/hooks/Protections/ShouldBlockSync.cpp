@@ -213,8 +213,8 @@ namespace
 				Notifications::Show("Protections",
 				    std::string("Blocked possible unknown ped crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
-				g_player_database_service->add_infraction_to_player(
-				    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+				g_player_database_service.add_infraction_to_player(
+				    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 				    eInfractions::UNKNOWN_PED_CRASH);
 				return true;
 			}
@@ -225,8 +225,8 @@ namespace
 				Notifications::Show("Protections",
 				    std::string("Blocked mismatched ped model crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
-				g_player_database_service->add_infraction_to_player(
-				    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+				g_player_database_service.add_infraction_to_player(
+				    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 				    eInfractions::MISMATCHED_PED_MODEL_CRASH);
 				return true;
 			}
@@ -241,8 +241,8 @@ namespace
 				Notifications::Show("Protections",
 				    std::string("Blocked invalid object crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
-				g_player_database_service->add_infraction_to_player(
-				    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+				g_player_database_service.add_infraction_to_player(
+				    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 				    eInfractions::INVALID_OBJECT_CRASH);
 				return true;
 			}
@@ -252,8 +252,8 @@ namespace
 				Notifications::Show("Protections",
 				    std::string("Blocked mismatched object model crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
-				g_player_database_service->add_infraction_to_player(
-				    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+				g_player_database_service.add_infraction_to_player(
+				    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 				    eInfractions::MISMATCHED_MODEL_CRASH);
 				return true;
 			}
@@ -268,8 +268,8 @@ namespace
 				Notifications::Show("Protections",
 				    std::string("Blocked mismatched player model crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
-				g_player_database_service->add_infraction_to_player(
-				    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+				g_player_database_service.add_infraction_to_player(
+				    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 				    eInfractions::MISMATCHED_PLAYER_MODEL);
 				return true;
 			}
@@ -280,8 +280,8 @@ namespace
 				Notifications::Show("Protections",
 				    std::string("Blocked player model switch crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
-				g_player_database_service->add_infraction_to_player(
-				    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+				g_player_database_service.add_infraction_to_player(
+				    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 				    eInfractions::PLAYER_MODEL_SWITCH);
 				return true;
 			}
@@ -293,8 +293,8 @@ namespace
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_VEHICLE(data.m_ModelHash))
 			{
 				LOG(WARNING) << "Blocked mismatched vehicle model crash from " << Protections::GetSyncingPlayer().GetName();
-				g_player_database_service->add_infraction_to_player(
-				    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+				g_player_database_service.add_infraction_to_player(
+				    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 				    eInfractions::MISMATCHED_VEHICLE_MODEL);
 				return true;
 			}
@@ -304,8 +304,8 @@ namespace
 				Notifications::Show("Protections",
 				    std::string("Blocked vehicle flood from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
-				g_player_database_service->add_infraction_to_player(
-				    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+				g_player_database_service.add_infraction_to_player(
+				    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 				    eInfractions::VEHICLE_FLOOD);
 				return true;
 			}
@@ -322,8 +322,8 @@ namespace
 					Notifications::Show("Protections",
 					    std::string("Blocked attachment from ").append(Protections::GetSyncingPlayer().GetName()),
 					    NotificationType::Warning);
-					g_player_database_service->add_infraction_to_player(
-					    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+					g_player_database_service.add_infraction_to_player(
+					    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 					    eInfractions::ATTACHMENT);
 					return true;
 				}
@@ -341,8 +341,8 @@ namespace
 					{
 						// TODO: add more checks
 						LOG(WARNING) << "Blocked remote teleport from " << Protections::GetSyncingPlayer().GetName();
-						g_player_database_service->add_infraction_to_player(g_player_database_service->get_or_create_player(YimMenu::Player(
-						                                                        Protections::GetSyncingPlayer().GetId())),
+						g_player_database_service.add_infraction_to_player(g_player_database_service.get_or_create_player(YimMenu::Player(
+						                                                       Protections::GetSyncingPlayer().GetId())),
 						    eInfractions::REMOTE_TELEPORT);
 						return true;
 					}
@@ -358,8 +358,8 @@ namespace
 			{
 				// TODO: really bad protection
 				LOG(WARNING) << "Blocked unknown task crash from " << Protections::GetSyncingPlayer().GetName();
-				g_player_database_service->add_infraction_to_player(
-				    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+				g_player_database_service.add_infraction_to_player(
+				    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 				    eInfractions::UNKNOWN_TASK);
 				return true;
 			}
@@ -377,8 +377,8 @@ namespace
 					Notifications::Show("Protections",
 					    std::string("Blocked ped attachment from ").append(Protections::GetSyncingPlayer().GetName()),
 					    NotificationType::Warning);
-					g_player_database_service->add_infraction_to_player(
-					    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+					g_player_database_service.add_infraction_to_player(
+					    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 					    eInfractions::PED_ATTACHMENT);
 					return true;
 				}
@@ -398,8 +398,8 @@ namespace
 				Notifications::Show("Protections",
 				    std::string("Blocked invalid propset from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
-				g_player_database_service->add_infraction_to_player(
-				    g_player_database_service->get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
+				g_player_database_service.add_infraction_to_player(
+				    g_player_database_service.get_or_create_player(YimMenu::Player(Protections::GetSyncingPlayer().GetId())),
 				    eInfractions::VEHICLE_FLOOD);
 				return true;
 			}

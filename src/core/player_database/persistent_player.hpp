@@ -13,7 +13,6 @@ namespace YimMenu
 		bool is_modder  = false;
 		bool is_trusted = false;
 		std::unordered_set<int> infractions;
-		std::string note;
 		uint64_t rid;
 
 		NLOHMANN_DEFINE_TYPE_INTRUSIVE(persistent_player, name, is_modder, is_trusted, infractions, note, rid);

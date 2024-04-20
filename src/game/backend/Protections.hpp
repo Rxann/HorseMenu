@@ -26,12 +26,5 @@ namespace YimMenu
 		{
 			GetInstance().m_SyncingPlayer = player;
 		}
-
-		bool IsSpoofedNameImpl(std::shared_ptr<persistent_player> player);
-
-		static bool IsSpoofedName(std::shared_ptr<persistent_player> player)
-		{
-			return GetInstance().IsSpoofedNameImpl(player);
-		}
 	};
 }

@@ -69,7 +69,7 @@ namespace YimMenu
 
 		LOG(INFO) << "Unloading";
 
-		g_player_database_service->save();
+		g_player_database_service.save();
 
 		ScriptMgr::Destroy();
 		LOG(INFO) << "ScriptMgr Uninitialized";

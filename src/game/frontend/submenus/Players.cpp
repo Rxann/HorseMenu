@@ -55,9 +55,9 @@ namespace YimMenu::Submenus
 			for (auto& [id, player] : sortedPlayers)
 			{
 				static bool needToRemoveStyle;
-				if (g_player_database_service->is_player_in_database(player))
+				if (g_player_database_service.is_player_in_database(player))
 				{
-					if (g_player_database_service->get_or_create_player(player)->is_modder)
+					if (g_player_database_service.get_or_create_player(player)->is_modder)
 					{
 						ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 0.1f, 0.1f, 1.f));
 						needToRemoveStyle = true;
@@ -79,9 +79,9 @@ namespace YimMenu::Submenus
 		{
 			for (auto& [id, player] : sortedPlayers)
 			{
-				if (g_player_database_service->is_player_in_database(player))
+				if (g_player_database_service.is_player_in_database(player))
 				{
-					if (auto plyr = g_player_database_service->get_or_create_player(player);
+					if (auto plyr = g_player_database_service.get_or_create_player(player);
 					    plyr->is_modder || !plyr->infractions.empty())
 					{
 						ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.f, 0.1f, 0.1f, 1.f));
@@ -120,61 +120,51 @@ namespace YimMenu::Submenus
 				}
 			}));
 			playerOptionsGroup->AddItem(std::make_shared<ImGuiItem>([] {
-				if (*Pointers.IsSessionStarted)
+				auto entry = g_player_database_service.get_or_create_player(YimMenu::Players::GetSelected());
+				ImGui::Text("Player Database Information");
+				if (g_player_database_service.is_player_in_database(YimMenu::Players::GetSelected()))
 				{
-					auto entry = g_player_database_service->get_or_create_player(YimMenu::Players::GetSelected());
+					//char notes_buffer[1024];
+					//strncpy(notes_buffer, entry->note.data(), sizeof(notes_buffer));
+					//bool notes_dirty = false;
 					ImGui::Text("Player Database Information");
-					if (g_player_database_service->is_player_in_database(YimMenu::Players::GetSelected()))
+					ImGui::Checkbox("Is Modder", &entry->is_modder);
+					ImGui::Checkbox("Is Trusted", &entry->is_trusted);
+					ImGui::Text(std::string("Rockstar ID")
+					                .append(std::to_string(g_player_database_service.get_rid_from_player(YimMenu::Players::GetSelected())))
+					                .c_str());
+					if (!entry->infractions.empty())
 					{
-						char notes_buffer[1024];
-						strncpy(notes_buffer, entry->note.data(), sizeof(notes_buffer));
-						bool notes_dirty = false;
-						ImGui::Text("Player Database Information");
-						ImGui::Checkbox("Is Modder", &entry->is_modder);
-						ImGui::Checkbox("Is Trusted", &entry->is_trusted);
-						ImGui::Text(std::string("Rockstar ID")
-						                .append(std::to_string(g_player_database_service->get_rid_from_player(YimMenu::Players::GetSelected())))
-						                .c_str());
-						if (ImGui::InputTextMultiline("Notes", notes_buffer, sizeof(notes_buffer)))
+						ImGui::Text("Infractions");
+						for (auto& infraction : entry->infractions)
 						{
-							entry->note = notes_buffer;
-							FiberPool::Push([=] {
-								g_player_database_service->save();
-							});
+							ImGui::BulletText(persistent_player::get_infraction_description(infraction));
 						}
-						if (!entry->infractions.empty())
-						{
-							ImGui::Text("Infractions");
-							for (auto& infraction : entry->infractions)
-							{
-								ImGui::BulletText(persistent_player::get_infraction_description(infraction));
-							}
-						}
-						bool shouldOpenRemovalWarning = false;
-						if (!shouldOpenRemovalWarning)
-						{
-							if (ImGui::Button("Clear All Infractions"))
-								shouldOpenRemovalWarning = true;
-						}
-						else
-						{
-							if (ImGui::Button("Cancel"))
-								shouldOpenRemovalWarning = false;
-							ImGui::SameLine();
-							if (ImGui::Button("Confirm"))
-							{
-								g_player_database_service->remove_all_infractions_from_player(entry);
-								g_player_database_service->save();
-								shouldOpenRemovalWarning = false;
-							}
-						}
+					}
+					bool shouldOpenRemovalWarning = false;
+					if (!shouldOpenRemovalWarning)
+					{
+						if (ImGui::Button("Clear All Infractions"))
+							shouldOpenRemovalWarning = true;
 					}
 					else
 					{
-						if (ImGui::Button("Manually add to Player Database"))
+						if (ImGui::Button("Cancel"))
+							shouldOpenRemovalWarning = false;
+						ImGui::SameLine();
+						if (ImGui::Button("Confirm"))
 						{
-							g_player_database_service->get_or_create_player(YimMenu::Players::GetSelected());
+							g_player_database_service.remove_all_infractions_from_player(entry);
+							g_player_database_service.save();
+							shouldOpenRemovalWarning = false;
 						}
+					}
+				}
+				else
+				{
+					if (ImGui::Button("Manually add to Player Database"))
+					{
+						g_player_database_service.get_or_create_player(YimMenu::Players::GetSelected());
 					}
 				}
 			}));

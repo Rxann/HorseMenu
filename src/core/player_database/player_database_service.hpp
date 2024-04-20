@@ -47,5 +47,5 @@ namespace YimMenu
 		bool is_player_in_database(YimMenu::Player player);
 	};
 
-	inline player_database_service* g_player_database_service;
+	inline player_database_service g_player_database_service;
 }
