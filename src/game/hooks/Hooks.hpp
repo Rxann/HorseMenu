@@ -1,7 +1,8 @@
 #pragma once
-#include <dxgi1_4.h>
 #include <D3D12.h>
+#include <dxgi1_4.h>
 #include <vulkan/vulkan.h>
+
 
 namespace rage
 {
@@ -87,7 +88,7 @@ namespace YimMenu::Hooks
 	namespace Info
 	{
 		extern uint8_t* NetworkRequest(HttpRequest* Request, uint8_t* a2, uint32_t a3);
-		
+
 		extern void PlayerHasJoined(CNetGamePlayer* player);
 		extern void PlayerHasLeft(CNetGamePlayer* player);
 	}
@@ -95,5 +96,6 @@ namespace YimMenu::Hooks
 	namespace Spoofing
 	{
 		extern void WritePlayerHealthData(void* iface, CPlayerHealthData* data);
+		extern void WritePhysicalScriptGameStateData(__int64 iface, __int64* node);
 	}
 }
