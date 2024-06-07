@@ -123,6 +123,7 @@ namespace YimMenu
 		void* NetworkObjectMgr;
 
 		PVOID WritePlayerHealthData;
+		PVOID WritePlayerAppearanceData;
 
 		//Patches
 		bool* ExplosionBypass;

@@ -268,6 +268,11 @@ namespace YimMenu
 			SendNetInfoToLobby = ptr.As<Functions::SendNetInfoToLobby>();
 		});
 
+		constexpr auto writePlayerAppearanceDataPtrn = Pattern<"40 55 53 56 57 41 55 41 56 41 57 48 8B EC 48 83 EC 50 4C 8B B9">("WritePlayerAppearanceData");
+		scanner.Add(writePlayerAppearanceDataPtrn, [this](PointerCalculator ptr) {
+			WritePlayerAppearanceData = ptr.As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

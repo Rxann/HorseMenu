@@ -55,6 +55,7 @@ namespace YimMenu
 
 		BaseHook::Add<Hooks::Spoofing::WritePlayerHealthData>(new DetourHook("WritePlayerHealthData", Pointers.WritePlayerHealthData, Hooks::Spoofing::WritePlayerHealthData));
 		BaseHook::Add<Hooks::Spoofing::SendNetInfoToLobby>(new DetourHook("SendNetInfoToLobby", Pointers.SendNetInfoToLobby, Hooks::Spoofing::SendNetInfoToLobby));
+		BaseHook::Add<Hooks::Spoofing::WritePlayerAppearanceData>(new DetourHook("WritePlayerAppearanceData", Pointers.WritePlayerAppearanceData, Hooks::Spoofing::WritePlayerAppearanceData));
 	}
 
 	Hooking::~Hooking()
