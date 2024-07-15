@@ -122,27 +122,24 @@ namespace
 			break;
 		case "CVehicleGadgetDataNode"_J:
 			LOG_FIELD_B(CVehicleGadgetNodeData, m_has_position);
-			const auto& position = node->GetData<CVehicleGadgetNodeData>().m_position;
-			LOG(INFO) << "\tm_position: X: " << position[0] << " Y: " << position[1] << " Z: " << position[2] << " W: " << position[3];
+			LOG_FIELD(CVehicleGadgetNodeData, m_position[0]);
+			LOG_FIELD(CVehicleGadgetNodeData, m_position[1]);
+			LOG_FIELD(CVehicleGadgetNodeData, m_position[2]);
+			LOG_FIELD(CVehicleGadgetNodeData, m_position[3]);
 			LOG_FIELD(CVehicleGadgetNodeData, m_num_gadgets);
-
-			for (int i = 0; i < node->GetData<CVehicleGadgetNodeData>().m_num_gadgets; i++)
+			if (node->GetData<CVehicleGadgetNodeData>().m_num_gadgets <= 2)
 			{
-				LOG(INFO) << "m_gadgets[" << i << "].m_type: " << node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_type;
-				uint32_t sum = 0;
-				for (int j = 0; j < sizeof(node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_data); j++)
+				for (int i = 0; i < node->GetData<CVehicleGadgetNodeData>().m_num_gadgets; i++)
 				{
-					sum += node->GetData<CVehicleGadgetNodeData>().m_gadgets[i].m_data[j];
+					LOG_FIELD(CVehicleGadgetNodeData, m_gadgets[i].m_type);
 				}
-
-				LOG(INFO) << "\tm_data: " << HEX(sum);
 			}
 			break;
 		}
 	}
 
-	std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60, 0x6927D266};
-	std::unordered_set<uint32_t> g_FishModels   = {
+	static const std::unordered_set<uint32_t> g_CrashObjects = {0xD1641E60, 0x6927D266};
+	static const std::unordered_set<uint32_t> g_FishModels   = {
         "A_C_Crawfish_01"_J,
         "A_C_FishBluegil_01_ms"_J,
         "A_C_FishBluegil_01_sm"_J,
@@ -173,7 +170,7 @@ namespace
         "A_C_FishSmallMouthBass_01_ms"_J,
     };
 
-	std::unordered_set<uint32_t> g_birdModels = {
+	static const std::unordered_set<uint32_t> g_BirdModels = {
 	    "a_c_prairiechicken_01"_J,
 	    "a_c_cormorant_01"_J,
 	    "a_c_crow_01"_J,
@@ -219,7 +216,26 @@ namespace
 	    "a_c_woodpecker_02"_J,
 	};
 
-	std::unordered_set<uint32_t> g_CageModels = {0x99C0CFCF, 0xF3D580D3, 0xEE8254F6, 0xC2D200FE};
+	static const std::unordered_set<uint32_t> g_CageModels        = {0x99C0CFCF, 0xF3D580D3, 0xEE8254F6, 0xC2D200FE};
+	static const std::unordered_set<uint32_t> g_ValidPlayerModels = {"mp_male"_J, "mp_female"_J};
+
+	inline bool IsValidPlayerModel(rage::joaat_t model)
+	{
+		return g_ValidPlayerModels.contains(model);
+	}
+
+	inline void CheckPlayerModel(CNetGamePlayer* player, uint32_t model)
+	{
+		if (!player)
+			return;
+
+		if (!IsValidPlayerModel(model))
+			g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetRID(),
+			                                    Protections::GetSyncingPlayer().GetName()),
+			    (int)PlayerDatabase::eInfraction::INVALID_PLAYER_MODEL);
+	}
+
+
 	// note that object can be nullptr here if it hasn't been created yet (i.e. in the creation queue)
 	bool ShouldBlockNode(CProjectBaseSyncDataNode* node, SyncNodeId id, eNetObjType type, rage::netObject* object)
 	{
@@ -299,24 +315,27 @@ namespace
 				    std::string("Blocked mismatched player model crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
 			}
 
-			if (data.m_ModelHash && (g_FishModels.count(data.m_ModelHash) || g_birdModels.count(data.m_ModelHash)))
+			if (data.m_ModelHash && (g_FishModels.count(data.m_ModelHash) || g_BirdModels.count(data.m_ModelHash)))
 			{
 				LOG(WARNING) << "Blocked player model switch crash from " << Protections::GetSyncingPlayer().GetName();
 				Notifications::Show("Protections",
 				    std::string("Blocked player model switch crash from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
 			}
+
+			CheckPlayerModel(Protections::GetSyncingPlayer().GetHandle(), data.m_ModelHash);
+
 			break;
 		}
 		case "CVehicleCreationDataNode"_J:
@@ -325,8 +344,11 @@ namespace
 			if (data.m_ModelHash && !STREAMING::IS_MODEL_A_VEHICLE(data.m_ModelHash))
 			{
 				LOG(WARNING) << "Blocked mismatched vehicle model crash from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections",
+				    std::string("Blocked mismatched vehicle model crash from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
@@ -336,6 +358,14 @@ namespace
 				LOG(WARNING) << "Blocked vehicle flood from " << Protections::GetSyncingPlayer().GetName();
 				Notifications::Show("Protections",
 				    std::string("Blocked vehicle flood from ").append(Protections::GetSyncingPlayer().GetName()),
+				    NotificationType::Warning);
+				return true;
+			}
+			if (g_CageModels.count(data.m_ModelHash))
+			{
+				LOG(WARNING) << "Blocked potential cage spawn from " << Protections::GetSyncingPlayer().GetName();
+				Notifications::Show("Protections",
+				    std::string("Blocked potential cage spawn from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				return true;
 			}
@@ -353,7 +383,7 @@ namespace
 					    std::string("Blocked attachment from ").append(Protections::GetSyncingPlayer().GetName()),
 					    NotificationType::Warning);
 					g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(
-					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 					                                    Protections::GetSyncingPlayer().GetName()),
 					    (int)PlayerDatabase::eInfraction::TRIED_ATTACH);
 					return true;
@@ -382,9 +412,12 @@ namespace
 					{
 						// TODO: add more checks
 						LOG(WARNING) << "Blocked remote teleport from " << Protections::GetSyncingPlayer().GetName();
+						Notifications::Show("Protections",
+						    std::string("Blocked remote teleport from ").append(Protections::GetSyncingPlayer().GetName()),
+						    NotificationType::Warning);
 						g_PlayerDatabase->AddInfraction(
 						    g_PlayerDatabase->GetOrCreatePlayer(
-						        Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+						        Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 						        Protections::GetSyncingPlayer().GetName()),
 						    (int)PlayerDatabase::eInfraction::REMOTE_TELEPORT);
 						return true;
@@ -418,7 +451,7 @@ namespace
 					    std::string("Blocked ped attachment from ").append(Protections::GetSyncingPlayer().GetName()),
 					    NotificationType::Warning);
 					g_PlayerDatabase->AddInfraction(g_PlayerDatabase->GetOrCreatePlayer(
-					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+					                                    Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 					                                    Protections::GetSyncingPlayer().GetName()),
 					    (int)PlayerDatabase::eInfraction::TRIED_ATTACH);
 					return true;
@@ -449,7 +482,7 @@ namespace
 				    std::string("Blocked invalid propset from ").append(Protections::GetSyncingPlayer().GetName()),
 				    NotificationType::Warning);
 				g_PlayerDatabase->AddInfraction(
-				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_rockstar_id,
+				    g_PlayerDatabase->GetOrCreatePlayer(Protections::GetSyncingPlayer().GetGamerInfo()->m_GamerHandle.m_RockstarId,
 				        Protections::GetSyncingPlayer().GetName()),
 				    (int)PlayerDatabase::eInfraction::TRIED_CRASH_PLAYER);
 				return true;
