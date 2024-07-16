@@ -13,9 +13,12 @@ namespace YimMenu::Hooks
 	{
 		BaseHook::Get<Spoofing::WriteVPMData, DetourHook<decltype(&Spoofing::WriteVPMData)>>()->Original()(vehicle, data);
 
+		LOG(VERBOSE) << "HOOK HIT";
+
 		if (auto it = g_SpoofingStorage.remote_teleports.find(vehicle->m_ObjectId);
 		    it != g_SpoofingStorage.remote_teleports.end())
 		{
+			LOG(VERBOSE) << "FOUND TP";
 			auto ptr                      = Entity(it->second.GetPed().GetHandle()).GetPointer<rage::fwEntity*>();
 			data->m_PassengersActive[0]   = true;
 			data->m_PassengerObjectIds[0] = ptr->m_NetObject->m_ObjectId;

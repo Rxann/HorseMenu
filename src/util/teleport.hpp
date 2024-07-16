@@ -138,16 +138,21 @@ namespace YimMenu::Teleport
 
 		if (PED::IS_PED_IN_ANY_VEHICLE(handle, true))
 		{
+			LOG(VERBOSE) << "PED IS IN VEHICLE";
+
 			auto veh = PED::GET_VEHICLE_PED_IS_USING(handle);
 
-			Network::RequestControlOfEntity(veh);
+			LOG(VERBOSE) << "VEH: " << std::to_string(veh);
 
+			LOG(VERBOSE) << "REQUESTING CONTROL";
 			if (Network::RequestControlOfEntity(veh))
 			{
+				LOG(VERBOSE) << "GOT CONTROL";
 				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(veh, coords.x, coords.y, coords.z, true, true, true);
 			}
 			else
 			{
+				LOG(VERBOSE) << "FAILED TO TAKE CONTROL OF VEH";
 				Notifications::Show("Teleport", "Failed to Take Control of Target's Vehicle!", NotificationType::Error);
 			}
 
@@ -155,23 +160,37 @@ namespace YimMenu::Teleport
 		}
 		else
 		{
-			auto hnd = SpawnVehicle("rcBoat", player.GetPed().GetPosition(), 0.0f);
+			LOG(VERBOSE) << "SPAWNING VEHICLE";
+			auto hnd = SpawnVehicle("coach4", player.GetPed().GetPosition(), 0.0f, false);
 
 			if (!hnd)
+			{
+				LOG(VERBOSE) << "VEHICLE IS NULL";
 				return false;
+			}
 
-			auto ptr = Entity(hnd).GetPointer<rage::fwEntity*>();
+			auto ent = Entity(hnd);
+			auto ptr = ent.GetPointer<rage::fwEntity*>();
 
 			if (!ptr->m_NetObject)
+			{
+				LOG(VERBOSE) << "NET OBJECT IS NULL";
 				return false;
+			}
 
+			LOG(VERBOSE) << "SETTING STUFF";
 			ENTITY::SET_ENTITY_VISIBLE(hnd, false);
 			ENTITY::SET_ENTITY_COLLISION(hnd, false, false);
 			ENTITY::FREEZE_ENTITY_POSITION(hnd, true);
 
+			LOG(VERBOSE) << "Emplacing";
 			auto vehId = ptr->m_NetObject->m_ObjectId;
 			g_SpoofingStorage.remote_teleports.emplace(vehId, player);
 
+			if (player.IsValid() && PED::IS_PED_IN_ANY_VEHICLE(player.GetPed().GetHandle(), false))
+				TASK::CLEAR_PED_TASKS_IMMEDIATELY(player.GetPed().GetHandle(), true, true);
+
+			LOG(VERBOSE) << "STARTING LOOP";
 			for (int i = 0; i < 30; i++)
 			{
 				ScriptMgr::Yield(25ms);
@@ -180,9 +199,16 @@ namespace YimMenu::Teleport
 
 				auto newCoords = ENTITY::GET_ENTITY_COORDS(hnd, true, true);
 				if (BUILTIN::VDIST(coords.x, coords.y, coords.z, newCoords.x, newCoords.y, newCoords.z) < 20 * 20 && VEHICLE::GET_PED_IN_VEHICLE_SEAT(hnd, 0) == handle)
+				{
+					LOG(VERBOSE) << "BREAKING";
 					break;
+				}
 			}
 
+			LOG(VERBOSE) << "DELETING";
+			ent.Delete();
+
+			LOG(VERBOSE) << "ERASING";
 			std::erase_if(g_SpoofingStorage.remote_teleports, [vehId](auto& obj) {
 				return obj.first == vehId;
 			});

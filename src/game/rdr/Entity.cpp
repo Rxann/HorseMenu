@@ -1,6 +1,7 @@
 #include "Entity.hpp"
 
 #include "Natives.hpp"
+#include "Pools.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "util/Joaat.hpp"
 
@@ -135,6 +136,42 @@ namespace YimMenu
 		ENTITY_ASSERT_VALID();
 		ENTITY_ASSERT_CONTROL();
 		ENTITY::FREEZE_ENTITY_POSITION(GetHandle(), enabled);
+	}
+
+	void Entity::Delete()
+	{
+		ENTITY_ASSERT_VALID();
+
+		if (IsVehicle())
+		{
+			for (auto obj : Pools::GetObjects())
+			{
+				if (!obj.IsValid())
+					break;
+				if (!ENTITY::IS_ENTITY_ATTACHED_TO_ENTITY(GetHandle(), obj.GetHandle()))
+					continue;
+				auto hnd = obj.GetHandle();
+				ENTITY::DELETE_ENTITY(&hnd);
+			}
+
+			for (auto veh : Pools::GetVehicles())
+			{
+				if (!veh.IsValid())
+					break;
+
+				if (GetHandle() == veh.GetHandle() || !ENTITY::IS_ENTITY_ATTACHED_TO_ENTITY(GetHandle(), veh.GetHandle()))
+					continue;
+				auto hnd = veh.GetHandle();
+				ENTITY::DELETE_ENTITY(&hnd);
+			}
+		}
+
+		ENTITY::DETACH_ENTITY(GetHandle(), true, true);
+		ENTITY::SET_ENTITY_COORDS_NO_OFFSET(GetHandle(), 7000.f, 7000.f, 15.f, false, false, false);
+		if (!ENTITY::IS_ENTITY_A_MISSION_ENTITY(GetHandle()))
+			ENTITY::SET_ENTITY_AS_MISSION_ENTITY(GetHandle(), true, true);
+		auto hnd = GetHandle();
+		ENTITY::DELETE_ENTITY(&hnd);
 	}
 
 	bool Entity::IsNetworked()

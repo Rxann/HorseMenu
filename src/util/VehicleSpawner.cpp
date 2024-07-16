@@ -2,7 +2,7 @@
 
 namespace YimMenu
 {
-	int SpawnVehicle(std::string model_name, Vector3 coords, float rotation)
+	int SpawnVehicle(std::string model_name, Vector3 coords, float rotation, bool not_needed)
 	{
 		Hash model = MISC::GET_HASH_KEY(model_name.c_str());
 
@@ -17,7 +17,8 @@ namespace YimMenu
 			ScriptMgr::Yield();
 			VEHICLE::SET_VEHICLE_ON_GROUND_PROPERLY(veh, 0);
 			ENTITY::SET_ENTITY_VISIBLE(veh, TRUE);
-			ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
+			if (not_needed)
+				ENTITY::SET_ENTITY_AS_NO_LONGER_NEEDED(&veh);
 			STREAMING::SET_MODEL_AS_NO_LONGER_NEEDED(model);
 			return veh;
 		}
