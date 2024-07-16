@@ -1,8 +1,10 @@
-#include "game/commands/PlayerCommand.hpp"
-#include "game/backend/Self.hpp"
-#include "game/rdr/Scripts.hpp"
+#include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/backend/Self.hpp"
+#include "game/commands/PlayerCommand.hpp"
 #include "game/rdr/Enums.hpp"
+#include "game/rdr/Scripts.hpp"
+
 
 namespace YimMenu::Features
 {
@@ -44,10 +46,11 @@ namespace YimMenu::Features
 
 		virtual void OnCall() override
 		{
-			MaxHonor(-1 & ~(1 << Self::GetPlayer().GetId()));
+			for (auto [idx, plyr] : YimMenu::Players::GetPlayers())
+				MaxHonor(1 << idx);
 		}
 	};
 
 	static MaximumHonor _MaximumHonor{"maxhonor", "Max Honor", "Sets the player's honor to the maximum value", 0, false};
-	static MaximumHonorAll _MaximumHonorAll{"maxhonorall", "Max Honor", "Sets the player's honor to the maximum value"};
+	static MaximumHonorAll _MaximumHonorAll{"maxhonorall", "Give All Max Honor", "Sets every player's honor to the maximum value"};
 }
