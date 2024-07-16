@@ -3,10 +3,10 @@
 #include "core/commands/BoolCommand.hpp"
 #include "core/commands/Commands.hpp"
 #include "core/player_database/PlayerDatabase.hpp"
-#include "game/backend/Players.hpp"
 #include "game/backend/PlayerData.hpp"
-#include "game/commands/PlayerCommand.hpp"
+#include "game/backend/Players.hpp"
 #include "game/backend/Self.hpp"
+#include "game/commands/PlayerCommand.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "util/network.hpp"
@@ -21,17 +21,18 @@
 #include "game/backend/ScriptMgr.hpp"
 #include "game/rdr/Entity.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/rdr/Packet.hpp"
 #include "game/rdr/ScriptGlobal.hpp"
 #include "game/rdr/Scripts.hpp"
 #include "util/VehicleSpawner.hpp"
-#include "game/rdr/Packet.hpp"
 
+#include <network/CNetworkScSession.hpp>
+#include <network/CNetworkScSessionPlayer.hpp>
 #include <network/netPeerAddress.hpp>
 #include <network/rlGamerInfo.hpp>
 #include <network/rlScPeerConnection.hpp>
 #include <script/scrThread.hpp>
-#include <network/CNetworkScSessionPlayer.hpp>
-#include <network/CNetworkScSession.hpp>
+
 
 namespace YimMenu::Features
 {
@@ -136,9 +137,9 @@ namespace YimMenu::Submenus
 					ImGui::Text("IP Address:");
 					ImGui::SameLine();
 					auto ipStr = std::string(std::to_string(ip.m_field1))
-					                  .append("." + std::to_string(ip.m_field2))
-					                  .append("." + std::to_string(ip.m_field3))
-					                  .append("." + std::to_string(ip.m_field4));
+					                 .append("." + std::to_string(ip.m_field2))
+					                 .append("." + std::to_string(ip.m_field3))
+					                 .append("." + std::to_string(ip.m_field4));
 					if (ImGui::Button(ipStr.c_str()))
 					{
 						ImGui::SetClipboardText(ipStr.c_str());
@@ -204,6 +205,12 @@ namespace YimMenu::Submenus
 						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
 						if (Teleport::WarpIntoVehicle(Self::GetPed().GetHandle(), playerVeh))
 							g_Spectating = false;
+					});
+				}
+				if (ImGui::Button("Bring"))
+				{
+					FiberPool::Push([] {
+						Teleport::BringPlayer(YimMenu::Players::GetSelected(), Self::GetPed().GetPosition());
 					});
 				}
 			}));
@@ -296,7 +303,7 @@ namespace YimMenu::Submenus
 		}
 
 		{
-			auto kick = std::make_shared<Category>("Kick"); 
+			auto kick = std::make_shared<Category>("Kick");
 
 			kick->AddItem(std::make_shared<ImGuiItem>([] {
 				drawPlayerList(true);

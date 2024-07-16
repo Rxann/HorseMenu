@@ -1,9 +1,18 @@
 #pragma once
+#include "Storage/Spoofing.hpp"
+#include "VehicleSpawner.hpp"
 #include "common.hpp"
 #include "core/frontend/Notifications.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/pointers/Pointers.hpp"
 #include "game/rdr/Entity.hpp"
 #include "game/rdr/Natives.hpp"
+#include "game/rdr/Player.hpp"
+#include "network.hpp"
+
+#include <entity/fwEntity.hpp>
+#include <network/CNetObjectMgr.hpp>
+#include <network/netObject.hpp>
 
 
 // TODO: remove this file
@@ -18,27 +27,27 @@ namespace YimMenu::Teleport
 		int current_attempts             = 0;
 		bool found_ground;
 		float height;
-	
+
 		do
 		{
 			found_ground = MISC::GET_GROUND_Z_FOR_3D_COORD(location.x, location.y, max_ground_check, &ground_z, FALSE);
 			STREAMING::REQUEST_COLLISION_AT_COORD(location.x, location.y, location.z);
-	
+
 			if (current_attempts % 10 == 0)
 			{
 				location.z += 25.f;
 			}
-	
+
 			++current_attempts;
-	
+
 			ScriptMgr::Yield();
 		} while (!found_ground && current_attempts < max_attempts);
-	
+
 		if (!found_ground)
 		{
 			return false;
 		}
-	
+
 		if (WATER::GET_WATER_HEIGHT(location.x, location.y, location.z, &height))
 		{
 			location.z = height;
@@ -47,7 +56,7 @@ namespace YimMenu::Teleport
 		{
 			location.z = ground_z + 1.f;
 		}
-	
+
 		return true;
 	}
 
@@ -113,6 +122,71 @@ namespace YimMenu::Teleport
 		else
 		{
 			PED::SET_PED_INTO_VEHICLE(ped, veh, seat);
+			return true;
+		}
+	}
+
+	inline bool BringPlayer(Player player, Vector3 coords)
+	{
+		int handle = player.GetPed().GetHandle();
+
+		if (ENTITY::IS_ENTITY_DEAD(handle))
+		{
+			Notifications::Show("Teleport", "The player you want to teleport is dead!", NotificationType::Error);
+			return false;
+		}
+
+		if (PED::IS_PED_IN_ANY_VEHICLE(handle, true))
+		{
+			auto veh = PED::GET_VEHICLE_PED_IS_USING(handle);
+
+			Network::RequestControlOfEntity(veh);
+
+			if (Network::RequestControlOfEntity(veh))
+			{
+				ENTITY::SET_ENTITY_COORDS_NO_OFFSET(veh, coords.x, coords.y, coords.z, true, true, true);
+			}
+			else
+			{
+				Notifications::Show("Teleport", "Failed to Take Control of Target's Vehicle!", NotificationType::Error);
+			}
+
+			return true;
+		}
+		else
+		{
+			auto hnd = SpawnVehicle("rcBoat", player.GetPed().GetPosition(), 0.0f);
+
+			if (!hnd)
+				return false;
+
+			auto ptr = Entity(hnd).GetPointer<rage::fwEntity*>();
+
+			if (!ptr->m_NetObject)
+				return false;
+
+			ENTITY::SET_ENTITY_VISIBLE(hnd, false);
+			ENTITY::SET_ENTITY_COLLISION(hnd, false, false);
+			ENTITY::FREEZE_ENTITY_POSITION(hnd, true);
+
+			auto vehId = ptr->m_NetObject->m_ObjectId;
+			g_SpoofingStorage.remote_teleports.emplace(vehId, player);
+
+			for (int i = 0; i < 30; i++)
+			{
+				ScriptMgr::Yield(25ms);
+
+				(*Pointers.NetworkObjectMgr)->ChangeOwner(ptr->m_NetObject, player.GetHandle(), 3, true);
+
+				auto newCoords = ENTITY::GET_ENTITY_COORDS(hnd, true, true);
+				if (BUILTIN::VDIST(coords.x, coords.y, coords.z, newCoords.x, newCoords.y, newCoords.z) < 20 * 20 && VEHICLE::GET_PED_IN_VEHICLE_SEAT(hnd, 0) == handle)
+					break;
+			}
+
+			std::erase_if(g_SpoofingStorage.remote_teleports, [vehId](auto& obj) {
+				return obj.first == vehId;
+			});
+
 			return true;
 		}
 	}

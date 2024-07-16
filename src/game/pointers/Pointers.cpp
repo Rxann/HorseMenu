@@ -387,6 +387,11 @@ namespace YimMenu
 			ReceiveArrayUpdate = ptr.As<PVOID>();
 		});
 
+		constexpr auto writeVPMDataPtrn = Pattern<"48 8B C4 48 89 58 10 48 89 68 18 48 89 70 20 48 89 48 08 57 41 54 41 55 41 56 41 57 48 83 EC 30 4C 8B A9">("WriteVehicleProximityMigrationData");
+		scanner.Add(writeVPMDataPtrn, [this](PointerCalculator ptr) {
+			WriteVPMData = ptr.As<PVOID>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

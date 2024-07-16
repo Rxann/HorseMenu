@@ -11,7 +11,6 @@
 #include <windows.h>
 
 
-
 class CNetGamePlayer;
 class CVehicle;
 class CPed;
@@ -177,6 +176,7 @@ namespace YimMenu
 		CNetworkPlayerMgr* NetworkPlayerMgr;
 
 		PVOID WritePlayerHealthData;
+		PVOID WriteVPMData;
 
 		//Patches
 		bool* ExplosionBypass;

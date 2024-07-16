@@ -9,7 +9,7 @@
 
 namespace YimMenu::Network
 {
-	inline bool NetWorkHasControlEntity(int ent)
+	inline bool NetworkHasControlEntity(int ent)
 	{
 		return NETWORK::NETWORK_HAS_CONTROL_OF_ENTITY(ent);
 	}
@@ -20,18 +20,18 @@ namespace YimMenu::Network
 		if (!*Pointers.IsSessionStarted)
 			return true;
 
-		if (NetWorkHasControlEntity(ent))
+		if (NetworkHasControlEntity(ent))
 			return true;
 
 		for (int i = 0; i < timeout; i++)
 		{
-			if (NetWorkHasControlEntity(ent))
+			if (NetworkHasControlEntity(ent))
 				return true;
 			NETWORK::NETWORK_REQUEST_CONTROL_OF_ENTITY(ent);
 
 			ScriptMgr::Yield();
 		}
 
-		return NetWorkHasControlEntity(ent);
+		return NetworkHasControlEntity(ent);
 	}
 }
