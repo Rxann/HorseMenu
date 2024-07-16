@@ -1,12 +1,12 @@
 #include "Self.hpp"
 
 #include "core/commands/BoolCommand.hpp"
-#include "core/commands/IntCommand.hpp"
 #include "core/commands/Commands.hpp"
-#include "game/backend/Self.hpp"
+#include "core/commands/IntCommand.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
 #include "game/backend/ScriptMgr.hpp"
+#include "game/backend/Self.hpp"
 #include "game/features/Features.hpp"
 #include "game/frontend/items/Items.hpp"
 #include "game/rdr/Natives.hpp"
@@ -58,7 +58,7 @@ namespace YimMenu::Submenus
 				bool isSelected = (i == Emote::selectedEmoteCategoryIndex);
 				if (ImGui::Selectable(Emote::emoteCategories[i], isSelected))
 				{
-					Emote::selectedEmoteCategoryIndex          = i;
+					Emote::selectedEmoteCategoryIndex = i;
 					Emote::selectedEmoteMemberIndex   = 0;
 				}
 				if (isSelected)
@@ -71,8 +71,7 @@ namespace YimMenu::Submenus
 
 		ImGui::Text("Emote");
 		if (ImGui::BeginCombo("##Emote",
-		        Emote::emoteCategoryMembers[Emote::selectedEmoteCategoryIndex][Emote::selectedEmoteMemberIndex]
-		            .name))
+		        Emote::emoteCategoryMembers[Emote::selectedEmoteCategoryIndex][Emote::selectedEmoteMemberIndex].name))
 		{
 			for (int i = 0; i < Emote::maxEmotesPerCategory; i++)
 			{
@@ -133,7 +132,7 @@ namespace YimMenu::Submenus
 
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));	
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("invis"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("offtheradar"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("noragdoll"_J));
@@ -149,10 +148,10 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antimelee"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("drunk"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("quickskin"_J));
+		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepgunsclean"_J));
 
 		toolsGroup->AddItem(std::make_shared<CommandItem>("suicide"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("clearcrimes"_J));
@@ -207,7 +206,7 @@ namespace YimMenu::Submenus
 
 		auto vehicle             = std::make_shared<Category>("Vehicle");
 		auto vehicleGlobalsGroup = std::make_shared<Group>("Globals");
-		auto vehicleFunGroup = std::make_shared<Group>("Fun");
+		auto vehicleFunGroup     = std::make_shared<Group>("Fun");
 
 		vehicleGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("vehiclegodmode"_J));
 		vehicleGlobalsGroup->AddItem(std::make_shared<CommandItem>("repairvehicle"_J));
