@@ -116,7 +116,7 @@ namespace YimMenu::Hooks
 	{
 		extern void WritePlayerHealthData(void* iface, CPlayerHealthData* data);
 		extern bool SendNetInfoToLobby(rage::rlGamerInfo* local_player, int64_t a2, int64_t a3, DWORD* a4);
-		extern void WriteVPMData(rage::netObject* vehicle, CVehicleProximityMigrationData* data);
+		extern void WriteVPMData(void* vehicle, CVehicleProximityMigrationData* data);
 	}
 
 	namespace Toxic

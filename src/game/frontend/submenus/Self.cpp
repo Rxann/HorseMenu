@@ -128,8 +128,6 @@ namespace YimMenu::Submenus
 		auto globalsGroup    = std::make_shared<Group>("Globals");
 		auto movementGroup   = std::make_shared<Group>("Movement");
 		auto toolsGroup      = std::make_shared<Group>("Tools");
-		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner");
-
 
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("godmode"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("neverwanted"_J));
@@ -139,10 +137,6 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antiafk"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepbarsfilled"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepcoresfilled"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteammo"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteclip"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("nospread"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("autocock"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepclean"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antilasso"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("antihogtie"_J));
@@ -151,7 +145,6 @@ namespace YimMenu::Submenus
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superjump"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("superpunch"_J));
 		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("quickskin"_J));
-		globalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepgunsclean"_J));
 
 		toolsGroup->AddItem(std::make_shared<CommandItem>("suicide"_J));
 		toolsGroup->AddItem(std::make_shared<CommandItem>("clearcrimes"_J));
@@ -181,6 +174,18 @@ namespace YimMenu::Submenus
 		main->AddItem(toolsGroup);
 		main->AddItem(movementGroup);
 		AddCategory(std::move(main));
+
+		auto weapons         = std::make_shared<Category>("Weapons");
+		auto weaponsGlobalsGroup = std::make_shared<Group>("Globals");
+
+		weaponsGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteammo"_J));
+		weaponsGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("infiniteclip"_J));
+		weaponsGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("nospread"_J));
+		weaponsGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("autocock"_J));
+		weaponsGlobalsGroup->AddItem(std::make_shared<BoolCommandItem>("keepgunsclean"_J));
+
+		weapons->AddItem(weaponsGlobalsGroup);
+		AddCategory(std::move(weapons));
 
 		auto horse             = std::make_shared<Category>("Horse");
 		auto horseGlobalsGroup = std::make_shared<Group>("Globals");

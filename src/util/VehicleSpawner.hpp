@@ -7,5 +7,6 @@
 
 namespace YimMenu
 {
-	extern int SpawnVehicle(std::string model_name, Vector3 coords, float rotation, bool not_needed = true);
+	extern int SpawnVehicle(std::string modelName, Vector3 coords, float rotation, bool notNeeded = true);
+	extern void RenderVehicleSpawnerMenu();
 }

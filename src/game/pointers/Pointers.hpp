@@ -64,6 +64,7 @@ namespace YimMenu
 		using GetAnimSceneFromHandle = CAnimScene** (*)(CAnimScene** scene, int handle);
 		using InventoryEventConstructor = CEventInventoryItemPickedUp* (*)(CEventInventoryItemPickedUp*, std::uint32_t reward_hash, std::uint32_t model_hash, bool a4, bool a5, void* a6);
 		using TriggerWeaponDamageEvent = void (*)(rage::netObject* source, rage::netObject* target, rage::netObject* unk, rage::fvector3* position, void* a5, void* a6, bool override_dmg, std::uint32_t* weapon_hash, float damage, float f10, int tire_index, int suspension_index, std::uint64_t flags, void* action_result, bool hit_entity_weapon, bool hit_ammo_attachment, bool silenced, bool a18, bool a19, int a20, int a21, int a22, int a23, int a24, int a25);
+		using TriggerGiveControlEvent				= void (*)(CNetGamePlayer* player, rage::netObject* object, int type);
 	};
 
 	struct PointerData
@@ -146,6 +147,7 @@ namespace YimMenu
 		std::uint8_t* NetArrayPatch;
 		Functions::InventoryEventConstructor InventoryEventConstructor;
 		CEventGroup** EventGroupNetwork;
+		Functions::TriggerGiveControlEvent TriggerGiveControlEvent;
 
 		// Vulkan
 		PVOID QueuePresentKHR;      //Init in renderer

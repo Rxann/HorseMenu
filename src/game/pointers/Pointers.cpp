@@ -392,6 +392,11 @@ namespace YimMenu
 			WriteVPMData = ptr.As<PVOID>();
 		});
 
+		constexpr auto triggerGiveControlEventPtrn = Pattern<"48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 48 89 78 ? 41 54 41 56 41 57 48 83 EC ? 65 4C 8B 0C 25">("TriggerGiveControlEvent");
+		scanner.Add(triggerGiveControlEventPtrn, [this](PointerCalculator ptr) {
+			TriggerGiveControlEvent = ptr.As<Functions::TriggerGiveControlEvent>();
+		});
+
 		if (!scanner.Scan())
 		{
 			LOG(FATAL) << "Some patterns could not be found, unloading.";

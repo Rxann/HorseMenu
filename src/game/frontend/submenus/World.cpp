@@ -1,6 +1,7 @@
 #include "World.hpp"
 
 #include "World/PedSpawner.hpp"
+#include "util/VehicleSpawner.hpp"
 #include "World/Shows.hpp"
 #include "World/Weather.hpp"
 #include "core/commands/Commands.hpp"
@@ -74,14 +75,20 @@ namespace YimMenu::Submenus
 		}));
 
 
-		auto spawners        = std::make_shared<Category>("Spawners");
-		auto pedSpawnerGroup = std::make_shared<Group>("Ped Spawner");
+		auto spawners            = std::make_shared<Category>("Spawners");
+		auto pedSpawnerGroup     = std::make_shared<Group>("Ped Spawner");
+		//auto vehicleSpawnerGroup = std::make_shared<Group>("Vehicle Spawner");
 
 		pedSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
 			RenderPedSpawnerMenu();
 		}));
 
+		/*vehicleSpawnerGroup->AddItem(std::make_shared<ImGuiItem>([] {
+			RenderVehicleSpawnerMenu();
+		}));*/
+
 		spawners->AddItem(pedSpawnerGroup);
+		//spawners->AddItem(vehicleSpawnerGroup);
 
 		auto killPeds = std::make_shared<Group>("", 1);
 		killPeds->AddItem(std::make_shared<CommandItem>("killallpeds"_J));

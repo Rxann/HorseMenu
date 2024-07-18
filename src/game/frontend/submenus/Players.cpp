@@ -171,49 +171,12 @@ namespace YimMenu::Submenus
 				}
 			}));
 
-			// TODO: refactor teleport items
-
-			teleportGroup->AddItem(std::make_shared<ImGuiItem>([] {
-				//Button Widget crashes the game, idk why. Changed to regular for now.
-				if (ImGui::Button("Teleport To"))
-				{
-					FiberPool::Push([] {
-						if (Teleport::TeleportEntity(Self::GetPed().GetHandle(),
-						        YimMenu::Players::GetSelected().GetPed().GetPosition(),
-						        false))
-							g_Spectating = false;
-					});
-				}
-				if (ImGui::Button("Teleport Behind"))
-				{
-					FiberPool::Push([] {
-						auto playerCoords = ENTITY::GET_OFFSET_FROM_ENTITY_IN_WORLD_COORDS(
-						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()),
-						    0,
-						    -10,
-						    0);
-						if (Teleport::TeleportEntity(Self::GetPed().GetHandle(),
-						        {playerCoords.x, playerCoords.y, playerCoords.z},
-						        false))
-							g_Spectating = false;
-					});
-				}
-				if (ImGui::Button("Teleport Into Vehicle"))
-				{
-					FiberPool::Push([] {
-						auto playerVeh = PED::GET_VEHICLE_PED_IS_USING(
-						    PLAYER::GET_PLAYER_PED_SCRIPT_INDEX(YimMenu::Players::GetSelected().GetId()));
-						if (Teleport::WarpIntoVehicle(Self::GetPed().GetHandle(), playerVeh))
-							g_Spectating = false;
-					});
-				}
-				if (ImGui::Button("Bring"))
-				{
-					FiberPool::Push([] {
-						Teleport::BringPlayer(YimMenu::Players::GetSelected(), Self::GetPed().GetPosition());
-					});
-				}
-			}));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tptoplayer"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpbehindplayer"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpintovehicle"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("bring"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpplayertowaypoint"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpplayertojail"_J));
 
 			main->AddItem(playerOptionsGroup);
 			main->AddItem(teleportGroup);

@@ -9,23 +9,22 @@
 
 namespace YimMenu::Hooks
 {
-	void Spoofing::WriteVPMData(rage::netObject* vehicle, CVehicleProximityMigrationData* data)
+	void Spoofing::WriteVPMData(void* veh, CVehicleProximityMigrationData* data)
 	{
-		BaseHook::Get<Spoofing::WriteVPMData, DetourHook<decltype(&Spoofing::WriteVPMData)>>()->Original()(vehicle, data);
+		rage::fwEntity* vehicle = *(rage::fwEntity**)(((__int64)veh) - 984);
 
-		LOG(VERBOSE) << "HOOK HIT";
+		BaseHook::Get<Spoofing::WriteVPMData, DetourHook<decltype(&Spoofing::WriteVPMData)>>()->Original()(veh, data);
 
-		if (auto it = g_SpoofingStorage.remote_teleports.find(vehicle->m_ObjectId);
-		    it != g_SpoofingStorage.remote_teleports.end())
+		if (auto it = g_SpoofingStorage.m_RemotePlayerTeleports.find(vehicle->m_NetObject->m_ObjectId);
+		    it != g_SpoofingStorage.m_RemotePlayerTeleports.end())
 		{
-			LOG(VERBOSE) << "FOUND TP";
-			auto ptr                      = Entity(it->second.GetPed().GetHandle()).GetPointer<rage::fwEntity*>();
-			data->m_PassengersActive[0]   = true;
-			data->m_PassengerObjectIds[0] = ptr->m_NetObject->m_ObjectId;
-			data->m_Position              = it->second.GetPed().GetPosition();
-			data->m_Velocity.x            = 1;
-			data->m_Velocity.y            = 1;
-			data->m_Velocity.z            = 1;
+			data->m_PassengersActive[0]    = true;
+			data->m_PassengerObjectIds[0]  = it->second.m_PlayerNetId;
+			data->m_HasPositionData        = true;
+			data->m_Position               = it->second.m_Position;
+			data->m_Velocity.x             = 1;
+			data->m_Velocity.y             = 1;
+			data->m_Velocity.z             = 1;
 		}
 	}
 }
