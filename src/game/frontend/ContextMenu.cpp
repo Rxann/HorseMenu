@@ -12,6 +12,10 @@
 namespace YimMenu::Features
 {
 	BoolCommand _ContextMenu("ctxmenu", "Context Menu", "Enables a context menu that allows you to perform actions on nearby entities and players");
+	BoolCommand _ContextPlayers("ctxmenuplayers", "Show Players", "Should the context menu show players?");
+	BoolCommand _ContextPeds("ctxmenupeds", "Show Peds", "Should the context menu show peds?");
+	BoolCommand _ContextVehicles("ctxmenuvehicles", "Show Vehicles", "Should the context menu show vehicles?");
+	BoolCommand _ContextObjects("ctxmenuobjects", "Show Objects", "Should the context menu show objects?");
 }
 
 namespace YimMenu
@@ -21,7 +25,8 @@ namespace YimMenu
 		return std::abs(screenPos.x - 0.5) + std::abs(screenPos.y - 0.5);
 	}
 
-	inline int GetEntityHandleClosestToMiddleOfScreen(bool includePlayers, bool includePeds, bool includeVehicles = false, bool includeObjects = false)
+	// TODO: Refactor this - LOS check
+	inline int GetEntityHandleClosestToMiddleOfScreen(bool includePlayers, bool includePeds, bool includeVehicles, bool includeObjects)
 	{
 		int closestHandle{};
 		float distance = 1;
@@ -56,6 +61,24 @@ namespace YimMenu
 			}
 		}
 
+		if (includeVehicles)
+		{
+			for (Entity obj : Pools::GetObjects())
+			{
+				if (obj.IsValid() || obj.GetPointer<void*>())
+					updateClosestEntity(obj.GetHandle());
+			}
+		}
+
+		if (includeObjects)
+		{
+			for (Entity veh : Pools::GetVehicles())
+			{
+				if (veh.IsValid() || veh.GetPointer<void*>())
+					updateClosestEntity(veh.GetHandle());
+			}
+		}
+
 		return closestHandle;
 	}
 
@@ -69,7 +92,10 @@ namespace YimMenu
 
 			if (m_Enabled)
 			{
-				auto handle = GetEntityHandleClosestToMiddleOfScreen(true, true);
+				auto handle = GetEntityHandleClosestToMiddleOfScreen(Features::_ContextPlayers.GetState(),
+				    Features::_ContextPeds.GetState(),
+				    Features::_ContextVehicles.GetState(),
+				    Features::_ContextObjects.GetState());
 
 				static auto switchToMenu = [&](ContextOperationsMenu menu) -> void {
 					if (m_CurrentOperationsMenu != menu)
@@ -91,11 +117,11 @@ namespace YimMenu
 					}
 					else if (m_Entity.IsVehicle())
 					{
-						switchToMenu(ContextMenuDefault); // TODO: Create Vehicle menu
+						switchToMenu(ContextMenuVehicles);
 					}
 					else if (m_Entity.IsObject())
 					{
-						switchToMenu(ContextMenuDefault); // TODO: Create Object menu
+						switchToMenu(ContextMenuObjects);
 					}
 
 					if (m_CurrentOperationsMenu.m_SelectedOperation.m_Name.empty())

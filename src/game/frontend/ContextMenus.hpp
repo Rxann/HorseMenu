@@ -75,4 +75,64 @@ namespace YimMenu
 		            Notifications::Show("Context Menu", std::format("Copied hash 0x{:08X}", (joaat_t)modelHash).c_str(), NotificationType::Info);
 	            }},
 	    });
+
+	inline ContextOperationsMenu ContextMenuVehicles = ContextOperationsMenu("Vehicles",
+	    {
+	        ContextMenuOperation{"Explode",
+	            [&](Entity entity) {
+		            auto pedCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
+		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::UNK, 10.0f, true, false, 1.0f);
+	            }},
+	        {"Apply Force",
+	            [&](Entity entity) {
+		            auto currentCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
+		            ENTITY::APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(entity.GetHandle(),
+		                1,
+		                currentCoords.x - 3,
+		                currentCoords.y,
+		                currentCoords.z,
+		                true,
+		                false,
+		                true,
+		                false);
+	            }},
+	        {"Copy Hash",
+	            [&](Entity entity) {
+		            Hash modelHash = ENTITY::GET_ENTITY_MODEL(entity.GetHandle());
+
+		            ImGui::SetClipboardText(std::format("0x{:08X}", (joaat_t)modelHash).c_str());
+		            LOG(INFO) << std::format("Copied hash 0x{:08X}", (joaat_t)modelHash).c_str();
+		            Notifications::Show("Context Menu", std::format("Copied hash 0x{:08X}", (joaat_t)modelHash).c_str(), NotificationType::Info);
+	            }},
+	    });
+
+	inline ContextOperationsMenu ContextMenuObjects = ContextOperationsMenu("Objects",
+	    {
+	        ContextMenuOperation{"Explode",
+	            [&](Entity entity) {
+		            auto pedCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
+		            FIRE::ADD_EXPLOSION(pedCoords.x, pedCoords.y, pedCoords.z, (int)ExplosionTypes::UNK, 10.0f, true, false, 1.0f);
+	            }},
+	        {"Apply Force",
+	            [&](Entity entity) {
+		            auto currentCoords = ENTITY::GET_ENTITY_COORDS(entity.GetHandle(), true, true);
+		            ENTITY::APPLY_FORCE_TO_ENTITY_CENTER_OF_MASS(entity.GetHandle(),
+		                1,
+		                currentCoords.x - 3,
+		                currentCoords.y,
+		                currentCoords.z,
+		                true,
+		                false,
+		                true,
+		                false);
+	            }},
+	        {"Copy Hash",
+	            [&](Entity entity) {
+		            Hash modelHash = ENTITY::GET_ENTITY_MODEL(entity.GetHandle());
+
+		            ImGui::SetClipboardText(std::format("0x{:08X}", (joaat_t)modelHash).c_str());
+		            LOG(INFO) << std::format("Copied hash 0x{:08X}", (joaat_t)modelHash).c_str();
+		            Notifications::Show("Context Menu", std::format("Copied hash 0x{:08X}", (joaat_t)modelHash).c_str(), NotificationType::Info);
+	            }},
+	    });
 }
