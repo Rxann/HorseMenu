@@ -38,6 +38,7 @@ namespace YimMenu
 		Ped GetPed();
 		bool IsHost();
 		uint32_t GetMessageId();
+		int GetRank();
 		uint64_t GetRID();
 		netAddress GetExternalIpAddress();
 		netAddress GetInternalIpAddress();

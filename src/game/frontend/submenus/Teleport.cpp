@@ -190,6 +190,7 @@ namespace YimMenu::Submenus
 
 		miscGroup->AddItem(std::make_shared<BoolCommandItem>("autotp"_J));
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptowaypoint"_J));
+		miscGroup->AddItem(std::make_shared<CommandItem>("tptomadamnazar"_J));
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptomount"_J));
 		miscGroup->AddItem(std::make_shared<CommandItem>("tptotraintrack"_J));
 

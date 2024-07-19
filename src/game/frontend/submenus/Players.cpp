@@ -22,7 +22,6 @@
 #include "game/rdr/Entity.hpp"
 #include "game/rdr/Natives.hpp"
 #include "game/rdr/Packet.hpp"
-#include "game/rdr/ScriptGlobal.hpp"
 #include "game/rdr/Scripts.hpp"
 #include "util/VehicleSpawner.hpp"
 
@@ -114,6 +113,9 @@ namespace YimMenu::Submenus
 					ImGui::Checkbox("Spectate", &YimMenu::g_Spectating);
 					ImGui::Text(YimMenu::Players::GetSelected().GetName());
 
+					auto rank = YimMenu::Players::GetSelected().GetRank();
+					ImGui::Text("Rank: %s", std::to_string(rank));
+
 					auto health    = YimMenu::Players::GetSelected().GetPed().GetHealth();
 					auto maxHealth = YimMenu::Players::GetSelected().GetPed().GetMaxHealth();
 					std::string healthStr = std::format("HP: {}/{} ({:.2f}%)", health, maxHealth, (float)health / maxHealth * 100.0f);
@@ -176,6 +178,7 @@ namespace YimMenu::Submenus
 			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpintovehicle"_J));
 			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("bring"_J));
 			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpplayertowaypoint"_J));
+			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpplayertomadamnazar"_J));
 			teleportGroup->AddItem(std::make_shared<PlayerCommandItem>("tpplayertojail"_J));
 
 			main->AddItem(playerOptionsGroup);

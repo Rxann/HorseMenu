@@ -3,6 +3,8 @@
 #include "game/pointers/Pointers.hpp"
 #include "game/backend/Players.hpp"
 #include "game/pointers/Pointers.hpp"
+#include "game/rdr/Natives.hpp"
+#include "game/rdr/ScriptGlobal.hpp"
 
 #include <network/CNetGamePlayer.hpp>
 #include <network/netPeerAddress.hpp>
@@ -73,6 +75,17 @@ namespace YimMenu
 	uint32_t Player::GetMessageId()
 	{
 		return m_Handle->m_MessageId;
+	}
+
+	int Player::GetRank()
+	{
+		if (!IsValid())
+			return -1;
+
+		if (GetId() == 255 || GetId() == PLAYER::NETWORK_PLAYER_ID_TO_INT())
+			return NETWORK::_NETWORK_GET_RANK();
+
+		return *ScriptGlobal(1155150).At(GetId(), 30).As<int*>();
 	}
 
 	uint64_t Player::GetRID()

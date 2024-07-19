@@ -5,6 +5,7 @@
 #include "core/commands/Commands.hpp"
 #include "game/backend/FiberPool.hpp"
 #include "game/backend/Players.hpp"
+#include "game/frontend/GUI.hpp"
 #include "game/pointers/Pointers.hpp"
 #include "game/rdr/Enums.hpp"
 #include "game/rdr/Pools.hpp"
@@ -63,19 +64,19 @@ namespace YimMenu
 
 		if (includeVehicles)
 		{
-			for (Entity obj : Pools::GetObjects())
+			for (Entity veh : Pools::GetVehicles())
 			{
-				if (obj.IsValid() || obj.GetPointer<void*>())
-					updateClosestEntity(obj.GetHandle());
+				if (veh.IsValid() || veh.GetPointer<void*>())
+					updateClosestEntity(veh.GetHandle());
 			}
 		}
 
 		if (includeObjects)
 		{
-			for (Entity veh : Pools::GetVehicles())
+			for (Entity obj : Pools::GetObjects())
 			{
-				if (veh.IsValid() || veh.GetPointer<void*>())
-					updateClosestEntity(veh.GetHandle());
+				if (obj.IsValid() || obj.GetPointer<void*>())
+					updateClosestEntity(obj.GetHandle());
 			}
 		}
 
@@ -84,7 +85,7 @@ namespace YimMenu
 
 	void ContextMenu::GameTickImpl()
 	{
-		if (Features::_ContextMenu.GetState())
+		if (Features::_ContextMenu.GetState() && !GUI::IsOpen())
 		{
 			PAD::DISABLE_CONTROL_ACTION(0, (Hash)eNativeInputs::INPUT_SWITCH_SHOULDER, true);
 			if (PAD::IS_DISABLED_CONTROL_JUST_PRESSED(0, (Hash)eNativeInputs::INPUT_SWITCH_SHOULDER))

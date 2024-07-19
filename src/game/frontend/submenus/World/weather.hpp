@@ -52,11 +52,12 @@ namespace YimMenu
 
 			virtual void OnCall() override
 			{
-				MISC::FORCE_LIGHTNING_FLASH();
+				auto pos = Self::GetPed().GetPosition();
+				MISC::_FORCE_LIGHTNING_FLASH_AT_COORDS(pos.x, pos.y, pos.z, -1.f);
 			}
 		};
 
 
-		static ForceLightning _forcelighting{"forcelighting", "Force Lightning", "Forces Lightning to Strike You!"};
+		static ForceLightning _forcelighting{"forcelighting", "Force Lightning", "Forces Lightning to Strike You. This is not networked."};
 	}
 }
