@@ -1,8 +1,10 @@
 #pragma once
 
 #include "util/Joaat.hpp"
+
 #include <string>
 #include <vector>
+
 
 namespace YimMenu::Rewards
 {
@@ -12,7 +14,7 @@ namespace YimMenu::Rewards
 		joaat_t reward_hash;
 		std::string description;
 	};
-	// inline const RewardInfo GoldRewards[]{{"mp001_s_mp_boxsm01x", "Reward Box"}, {"s_inv_moneyclip01x", "Money Clip"}, {"p_moneyStack01x", "Money Stack"}, {"s_pu_coinpurse02x", "Coin Purse"}};
+	inline const RewardInfo GoldRewards[]{{"mp001_s_mp_boxsm01x"_J, "mp001_s_mp_boxsm01x"_J, "Reward Box"}};
 
 	inline const RewardInfo Heirlooms[]{{"MP005_S_HL_BR_BOARBRISTLE"_J, "PROVISION_HRLM_BRUSH_BOAR"_J, "Boar Bristle Brush"}, {"MP005_S_HL_BR_EBNY"_J, "PROVISION_HRLM_BRUSH_EBONY"_J, "Ebony Hairbrush"}, {"MP005_S_HL_BR_GOAT"_J, "PROVISION_HRLM_BRUSH_GOATHAIR"_J, "Goat Hair Brush"}, {"MP005_S_HL_BR_HORSE"_J, "PROVISION_HRLM_BRUSH_HORSEHAIR"_J, "Horse Hair Brush"}, {"MP005_S_HL_BR_NG_RSEWD"_J, "PROVISION_HRLM_BRUSH_ROSEWOOD_NG"_J, "New Guinea Rosewood Brush"}, {"MP005_S_HL_BR_RSEWD"_J, "PROVISION_HRLM_BRUSH_ROSEWOOD"_J, "Rosewood Brush"}, {"MP005_S_HL_CMB_BOXWOOD"_J, "PROVISION_HRLM_COMB_BOXWOOD"_J, "Boxwood Comb"}, {"MP005_S_HL_CMB_CHRYWD"_J, "PROVISION_HRLM_COMB_CHERRYWOOD"_J, "Cherrywood Comb"}, {"MP005_S_HL_CMB_IVRY"_J, "PROVISION_HRLM_COMB_IVORY"_J, "Ivory Comb"}, {"MP005_S_HL_CMB_TORTSHELL"_J, "PROVISION_HRLM_COMB_TORTOISESHELL"_J, "Tortoiseshell Comb"}, {"MP005_S_HL_HP_CRVDWD"_J, "PROVISION_HRLM_HAIRPIN_WOODEN"_J, "Carved Wood Hairpin"}, {"MP005_S_HL_HP_EBNY"_J, "PROVISION_HRLM_HAIRPIN_EBONY"_J, "Ebony Hairpin"}, {"MP005_S_HL_HP_IVRY"_J, "PROVISION_HRLM_HAIRPIN_IVORY"_J, "Ivory Hairpin"}, {"MP005_S_HL_HP_JDE"_J, "PROVISION_HRLM_HAIRPIN_JADE"_J, "Jade Hairpin"}, {"MP005_S_HL_HP_MTL"_J, "PROVISION_HRLM_HAIRPIN_METAL"_J, "Metal Hairpin"}};
 
@@ -38,9 +40,31 @@ namespace YimMenu::Rewards
 
 	inline const RewardInfo TarotCards_Wands[]{{"MP005_S_CARDT_2W"_J, "DOCUMENT_CARD_TWO_WANDS"_J, "2 of Wands"}, {"MP005_S_CARDT_3W"_J, "DOCUMENT_CARD_THREE_WANDS"_J, "3 of Wands"}, {"MP005_S_CARDT_4W"_J, "DOCUMENT_CARD_FOUR_WANDS"_J, "4 of Wands"}, {"MP005_S_CARDT_5W"_J, "DOCUMENT_CARD_FIVE_WANDS"_J, "5 of Wands"}, {"MP005_S_CARDT_6W"_J, "DOCUMENT_CARD_SIX_WANDS"_J, "6 of Wands"}, {"MP005_S_CARDT_7W"_J, "DOCUMENT_CARD_SEVEN_WANDS"_J, "7 of Wands"}, {"MP005_S_CARDT_8W"_J, "DOCUMENT_CARD_EIGHT_WANDS"_J, "8 of Wands"}, {"MP005_S_CARDT_9W"_J, "DOCUMENT_CARD_NINE_WANDS"_J, "9 of Wands"}, {"MP005_S_CARDT_10W"_J, "DOCUMENT_CARD_TEN_WANDS"_J, "10 of Wands"}, {"MP005_S_CARDT_ACW"_J, "DOCUMENT_CARD_ACE_WANDS"_J, "Ace of Wands"}, {"MP005_S_CARDT_KIW"_J, "DOCUMENT_CARD_KING_WANDS"_J, "King of Wands"}, {"MP005_S_CARDT_KNW"_J, "DOCUMENT_CARD_KNIGHT_WANDS"_J, "Knight of Wands"}, {"MP005_S_CARDT_PAW"_J, "DOCUMENT_CARD_PAGE_WANDS"_J, "Page of Wands"}, {"MP005_S_CARDT_QUW"_J, "DOCUMENT_CARD_QUEEN_WANDS"_J, "Queen of Wands"}};
 
+	inline const RewardInfo Fossils[]{{0, "COLLECTIBLE_FOSSIL_CORAL"_J, ""}, {0, "COLLECTIBLE_FOSSIL_BIVALVE"_J, ""}, {0, "COLLECTIBLE_FOSSIL_BRACHIOPOD"_J, ""}, {0, "COLLECTIBLE_FOSSIL_BROW_HORN"_J, ""}, {0, "COLLECTIBLE_FOSSIL_CEPHALOPOD"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TRILOBITE_CRYPTO"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TRILOBITE_ISO"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TOOTH_MEGA"_J, ""}, {0, "COLLECTIBLE_FOSSIL_NEO"_J, ""}, {0, "COLLECTIBLE_FOSSIL_STONE"_J, ""}, {0, "COLLECTIBLE_FOSSIL_PET_WOOD"_J, ""}, {0, "COLLECTIBLE_FOSSIL_PET_WOOD_RAINBOW"_J, ""}, {0, "COLLECTIBLE_FOSSIL_SEA_LILY"_J, ""}, {0, "COLLECTIBLE_FOSSIL_SEA_SCORPION"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TOOTH_SERRATED"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TAIL_SPIKE"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TOE_CLAW"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TOOTH_TREX"_J, ""}, {0, "COLLECTIBLE_FOSSIL_TULLY_MONSTER"_J, ""}, {0, "COLLECTIBLE_FOSSIL_PET_WOOD_YELLOW"_J, ""}};
+	
+	inline const RewardInfo Eggs[]{{0, "COLLECTIBLE_EGG_VULTURE"_J, ""}, {0, "COLLECTIBLE_EGG_LOON"_J, ""}, {0, "COLLECTIBLE_EGG_DUCK"_J, ""}, {0, "COLLECTIBLE_EGG_GOOSE"_J, ""}, {0, "COLLECTIBLE_EGG_HERON"_J, ""}, {0, "COLLECTIBLE_EGG_EGRET"_J, ""}, {0, "COLLECTIBLE_EGG_EAGLE"_J, ""}, {0, "COLLECTIBLE_EGG_HAWK"_J, ""}, {0, "COLLECTIBLE_EGG_SPOONBILL"_J, ""}, {0, "COLLECTIBLE_EGG_CONDOR"_J, ""}};
+	
+	inline const RewardInfo TreasureReward[]{{0, "REWARD_ABANDONED_LOOT_MALE"_J, "Treasure Reward"}};
+
+	inline const RewardInfo CapitaleReward[]{{0, "REWARD_CAPITALE_CHEST_LARGE"_J, "Capitale Reward"}};
+
+	inline const RewardInfo RegularXP[]{{0, "AWARD_XP_MISSION_COMPLETE_REWARD_XXL"_J, "25K XP Reward"}};
+
+	inline const RewardInfo MoonshinerXP[]{{0, 0xCBA92A55, "Moonshine XP Reward"}};
+
+	inline const RewardInfo TraderXP[]{{0, 0xB11109AB, "Trader XP Reward"}};
+
+	inline const RewardInfo CollectorXP[]{{0, 0xA64F15F2, "Collector XP Reward"}};
+
+	inline const RewardInfo NaturalistXP[]{{0, 0x05839847, "Naturalist XP Reward"}};
+
+	inline const RewardInfo BountyHunterXP[]{{0, 0x5424CC1A, "Bounty Hunter XP Reward"}};
+
+	inline const RewardInfo TraderGoods[]{{0, 0xFD780631, "Trader Goods"}};
+
 	enum class eRewardType : int
 	{
-		// GOLD_REWARDS,
+		GOLD_REWARDS,
 		HEIRLOOMS,
 		COINS,
 		ALCBOTTLES,
@@ -53,8 +77,20 @@ namespace YimMenu::Rewards
 		TAROTCARDS_PENTACLES,
 		TAROTCARDS_SWORDS,
 		TAROTCARDS_WANDS,
+		FOSSILS,
+		EGGS,
+		TREASURE,
+		CAPITALE,
+		XP,
+		MOONSHINERXP,
+		TRADERXP,
+		COLLECTORXP,
+		NATURALISTXP,
+		BOUNTYHUNTERXP,
+		TRADERGOODS,
 	};
 
 	void GiveRequestedRewards(std::vector<eRewardType> rewards);
 	void GiveReward(const RewardInfo& info);
+	void GiveScriptReward(const RewardInfo& info, bool loottable = true);
 }
